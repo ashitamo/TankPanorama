@@ -5,13 +5,11 @@ from surround_view import utils
 import threading
 from PIL import Image
 import queue
-import numba
 import os
 import time
 from fisheye import Fisheye
 
 
-@numba.njit()
 def merge(imA, imB, G):
     out = (np.multiply(imA, G) + np.multiply(imB, 1 - G)).astype(np.uint8)
     return out
@@ -64,13 +62,13 @@ class Panorama(threading.Thread):
         self.imagespath = None
 
     def load_weights_and_masks(self, weights_image, masks_image):
-        GMat = np.asarray(Image.open(weights_image).convert("RGBA"), dtype=np.float) / 255.0
+        GMat = np.asarray(Image.open(weights_image).convert("RGBA"), dtype=np.float64) / 255.0
         self.weights = [np.stack((GMat[:, :, k],
                                   GMat[:, :, k],
                                   GMat[:, :, k]), axis=2)
                         for k in range(4)]
 
-        Mmat = np.asarray(Image.open(masks_image).convert("RGBA"), dtype=np.float)
+        Mmat = np.asarray(Image.open(masks_image).convert("RGBA"), dtype=np.float64)
         Mmat = utils.convert_binary_to_bool(Mmat)
         self.masks = [Mmat[:, :, k] for k in range(4)]
 
