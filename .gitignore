@@ -1,0 +1,10 @@
+__pycache__/fisheye.cpython-36.pyc
+__pycache__/fisheye.cpython-310.pyc
+__pycache__/panorama.cpython-310.pyc
+__pycache__/run_live.cpython-310.pyc
+__pycache__/setting.cpython-36.pyc
+__pycache__/setting.cpython-310.pyc
+__pycache__/t.cpython-310.pyc
+*.avi
+*.mkv
+*.mp4
