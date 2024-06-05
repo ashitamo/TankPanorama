@@ -8,11 +8,61 @@ import queue
 import os
 import time
 from fisheye import Fisheye
-
+from ultralytics import YOLO
+from ultralytics.utils.plotting import Annotator, colors
 
 def merge(imA, imB, G):
     out = (np.multiply(imA, G) + np.multiply(imB, 1 - G)).astype(np.uint8)
     return out
+
+
+class Detection(threading.Thread):
+    def __init__(self,weight_path):
+        super().__init__()
+        self.daemon = True
+        self.model = YOLO(weight_path)
+        self.stopflag = False
+        self.in_queue = queue.Queue(2)
+        self.out_queue = queue.Queue(2)
+
+    def boxes2AngleDistance(self,results):
+        decs = []
+        xyxyn = results[0].boxes.xyxyn.cpu().numpy()
+        xyxyn[:,[0,2]] = xyxyn[:,[0,2]]*360
+        xyxyn[:,[1,3]] = xyxyn[:,[1,3]]*180
+        cls = results[0].boxes.cls.cpu().numpy().tolist()
+
+        for i in zip(xyxyn,cls):
+            decdict = {
+                "lefttop": [i[0][0],i[0][1]],
+                "rightbottom": [i[0][2],i[0][3]],
+                "class": i[1]
+            }
+            decs.append(decdict)
+        return decs
+
+    def draw(self, image, decs):
+        for dec in decs:
+            xyxy = dec["lefttop"] + dec["rightbottom"]
+            xyxy[0] = xyxy[0]/360 * image.shape[1]
+            xyxy[1] = xyxy[1]/180 * image.shape[0]
+            xyxy[2] = xyxy[2]/360 * image.shape[1]
+            xyxy[3] = xyxy[3]/180 * image.shape[0]
+            cv2.rectangle(image, (int(xyxy[0]), int(xyxy[1])), (int(xyxy[2]), int(xyxy[3])), (0, 255, 0), 2)
+            cv2.putText(image, str(int(dec["class"])), (int(xyxy[0]), int(xyxy[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 2)
+        return image
+    def run(self):
+        while not self.stopflag:
+            try:
+                image = self.in_queue.get(timeout=0.1)
+            except queue.Empty:
+                continue
+            results = self.model.track(image, persist=True, verbose=False)
+            decs = self.boxes2AngleDistance(results)
+            if not self.out_queue.full():
+                self.out_queue.put(decs, timeout=0.1)
+
+
 
 class mergeThread(threading.Thread):
     def __init__(self):
@@ -29,8 +79,9 @@ class mergeThread(threading.Thread):
             self.buffer.put(merge(imA, imB, G))
 
 
+
 class Panorama(threading.Thread):
-    def __init__(self,images):
+    def __init__(self,images,is_detect=False):
         self.cx,self.cy = images[0].shape[1]//2,images[0].shape[0]//2
 
         self.OV_FOV = 20
@@ -60,6 +111,10 @@ class Panorama(threading.Thread):
         self.buffer = queue.Queue(1)
         self.fisheyes = None
         self.imagespath = None
+        self.is_detect = is_detect
+        if self.is_detect:
+            self.detection = Detection("yolov8n.pt")
+            self.detection.start()
 
     def load_weights_and_masks(self, weights_image, masks_image):
         GMat = np.asarray(Image.open(weights_image).convert("RGBA"), dtype=np.float64) / 255.0
@@ -162,6 +217,8 @@ class Panorama(threading.Thread):
     def stopmergethread(self):
         for t in self.threads:
             t.stopflag = True
+        if self.is_detect:
+            self.detection.stopflag = True
 
     def stitch_all_parts(self):
         if len(self.threads) != 0:
@@ -250,7 +307,9 @@ class Panorama(threading.Thread):
             #self.make_white_balance()
             self.white_balance()
             self.copyMakeBorder()
-
+            if self.is_detect:
+                if not self.detection.in_queue.full():
+                    self.detection.in_queue.put(self.image, block=False,timeout=0.01)
             self.buffer.put(self.image)
             
 
