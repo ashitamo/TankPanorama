@@ -12,8 +12,6 @@ from ultralytics.utils.plotting import Annotator, colors
 from collections import defaultdict
 
 def init(names,paramsfile,images,weightsfile,maskfile,is_detect) -> tuple[Fisheye,Panorama]:
-    paramsfile = [os.path.join("my_yaml", name + ".yaml") for name in names]
-    images = [os.path.join("und_smimages", name + ".png") for name in names]
     fisheyes = [Fisheye(p, n) for p,n in zip(paramsfile, names)]
     cys = []
     for i in range(4):
