@@ -7,6 +7,7 @@ import threading
 import queue
 import os
 os.environ["OPENCV_VIDEOIO_MSMF_ENABLE_HW_TRANSFORMS"] = "0"
+import sys
 class Fisheye(threading.Thread):
     def __init__(self,paramsfile,camera_name,cap_number = None):
         self.paramsfile = paramsfile
@@ -40,7 +41,10 @@ class Fisheye(threading.Thread):
         
         self.cap_number = cap_number
         if self.cap_number is not None:
-            self.cap = cv2.VideoCapture(self.cap_number, cv2.CAP_DSHOW)
+            if sys.platform == "win32":
+                self.cap = cv2.VideoCapture(self.cap_number, cv2.CAP_DSHOW)
+            else:
+                self.cap = cv2.VideoCapture(self.cap_number)
             desired_width = 640 # 你想設定的寬度
             desired_height = 480  # 你想設定的高度
             self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, desired_width)

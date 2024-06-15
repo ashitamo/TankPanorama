@@ -5,9 +5,17 @@ import time
 import numpy as np
 import pickle
 import setting
+import sys
 
+number = 0
+name = "front"
+c = 3
 
-cam1 = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+if sys.platform == "win32":
+    cam1 = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+else:
+    cam1 = cv2.VideoCapture(0)
+
 cam1.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
 desired_width = 640 # 你想設定的寬度
 desired_height = 480  # 你想設定的高度
@@ -25,7 +33,7 @@ actual_fps = cam1.get(cv2.CAP_PROP_FPS)
 print("實際設定的FPS:", actual_fps)
 
 
-fs = cv2.FileStorage("my_yaml/left.yaml", cv2.FILE_STORAGE_READ)
+fs = cv2.FileStorage(f"my_yaml/{name}.yaml", cv2.FILE_STORAGE_READ)
 K = fs.getNode("camera_matrix").mat()
 D = fs.getNode("dist_coeffs").mat()
 fs.release()
@@ -41,7 +49,7 @@ def undistort(img):
     undistorted_img = cv2.remap(img, map1, map2, interpolation=cv2.INTER_LANCZOS4, borderMode=cv2.BORDER_CONSTANT)
     return undistorted_img
 
-c = 3
+
 while True:
     cam1.grab()
     ret1, frame1o = cam1.retrieve()

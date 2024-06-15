@@ -60,7 +60,7 @@ class Detection(threading.Thread):
             if not self.out_queue.full():
                 self.out_queue.put(decs, timeout=0.1)
 
-class ParanomaReceiver(threading.Thread):
+class PanoramaReceiver(threading.Thread):
     def __init__(self):
         super().__init__()
         self.daemon = True
@@ -78,16 +78,21 @@ class ParanomaReceiver(threading.Thread):
             image = self.cap.read()[1]
             self.out_queue.put(image)
 
-
-if __name__ == "__main__":
-    paranomaReceiver = ParanomaReceiver()
-    paranomaReceiver.start()
+def init():
+    panoramaReceiver = PanoramaReceiver()
+    panoramaReceiver.start()
     detection = Detection("yolov8n.pt")
     detection.start()
+    return panoramaReceiver, detection
+
+if __name__ == "__main__":
+    print("init")
+    panoramaReceiver, detection = init()
+    print("init finish")
     decs = []
     while True:
         last = time.time()
-        image = paranomaReceiver.out_queue.get()
+        image = panoramaReceiver.out_queue.get()
 
         if not detection.in_queue.full():
             detection.in_queue.put(image)
