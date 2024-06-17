@@ -45,14 +45,17 @@ class Fisheye(threading.Thread):
                 self.cap = cv2.VideoCapture(self.cap_number, cv2.CAP_DSHOW)
             else:
                 self.cap = cv2.VideoCapture(self.cap_number,cv2.CAP_V4L2)
+                self.cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 3) # auto mode
+                self.cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 1) # manual mode
+                self.cap.set(cv2.CAP_PROP_EXPOSURE, 200)
+        
             desired_width = 640 # 你想設定的寬度
             desired_height = 480  # 你想設定的高度
             self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, desired_width)
             self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, desired_height)
             desired_fps = 30  # 你想設定的FPS值
             self.cap.set(cv2.CAP_PROP_FPS, desired_fps)
-            self.cap.set(cv2.CAP_PROP_EXPOSURE, -5)
-        
+            
 
     def load_params(self, paramsfile):
         fs = cv2.FileStorage(paramsfile, cv2.FILE_STORAGE_READ)
