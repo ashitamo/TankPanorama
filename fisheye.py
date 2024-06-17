@@ -44,7 +44,7 @@ class Fisheye(threading.Thread):
             if sys.platform == "win32":
                 self.cap = cv2.VideoCapture(self.cap_number, cv2.CAP_DSHOW)
             else:
-                self.cap = cv2.VideoCapture(self.cap_number)
+                self.cap = cv2.VideoCapture(self.cap_number,cv2.CAP_V4L2)
             desired_width = 640 # 你想設定的寬度
             desired_height = 480  # 你想設定的高度
             self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, desired_width)
