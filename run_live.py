@@ -7,18 +7,16 @@ import os,time
 from panorama import Panorama
 os.environ["OPENCV_VIDEOIO_MSMF_ENABLE_HW_TRANSFORMS"] = "0"
 
-def init(names):
-    paramsfile = [os.path.join("my_yaml", name + ".yaml") for name in names]
-    images = [os.path.join("und_smimages", name + ".png") for name in names]
+def init(names,paramsfile,images,weightsfile,maskfile):
     # fisheyes = [Fisheye(p, n) for p,n in zip(paramsfile, names)]
     fisheyes = [None,None,None,None]
-    fisheyes[0] = Fisheye(paramsfile[0], names[0],1)
+    fisheyes[0] = Fisheye(paramsfile[0], names[0],0)
     print('fisheye0 ok')
-    fisheyes[1] = Fisheye(paramsfile[1], names[1],0)
+    fisheyes[1] = Fisheye(paramsfile[1], names[1],2)
     print('fisheye1 ok')
     fisheyes[2] = Fisheye(paramsfile[2], names[2],4)
     print('fisheye2 ok')
-    fisheyes[3] = Fisheye(paramsfile[3], names[3],3)
+    fisheyes[3] = Fisheye(paramsfile[3], names[3],6)
     print('fisheye3 ok')
     cys = []
     for i in range(4):
@@ -27,18 +25,22 @@ def init(names):
         cys.append(cy)
     panorama = Panorama(cys)
     panorama.imagespath =  [os.path.join("und_smimages", name + ".png") for name in names]
-    panorama.load_weights_and_masks("weights.png", "masks.png")
+    panorama.load_weights_and_masks(weightsfile, maskfile)
 
     for i in fisheyes:
         i.start()
     panorama.fisheyes = fisheyes
     panorama.runmergethread()
     panorama.start()
-    return fisheyes,panorama
+    return fisheyes,panorama,images
 
 print("init")
 names = ['front','back', 'left', 'right']
-fisheyes,panorama = init(names)
+paramsfile = [os.path.join("./my_yaml", name + ".yaml") for name in names]
+images = [os.path.join("./und_smimages", name + ".png") for name in names]
+weightsfile = "weights.png"
+maskfile = "masks.png"
+fisheyes,panorama = init(names,paramsfile,images,weightsfile,maskfile)
 panorama.stitch_all_parts()
 panorama.copyMakeBorder()
 print("init finish")
