@@ -11,14 +11,14 @@ from ultralytics import YOLO
 from ultralytics.utils.plotting import Annotator, colors
 from collections import defaultdict
 
-def init(names,paramsfile,images,weightsfile,maskfile,is_detect) -> tuple[Fisheye,Panorama]:
+def init(names,paramsfile,images,weightsfile,maskfile) -> tuple[Fisheye,Panorama]:
     fisheyes = [Fisheye(p, n) for p,n in zip(paramsfile, names)]
     cys = []
     for i in range(4):
         fisheyes[i].build_one_map()
         cy = fisheyes[i].warpone(cv2.imread(images[i]))
         cys.append(cy)
-    panorama = Panorama(cys,is_detect)
+    panorama = Panorama(cys)
     panorama.imagespath =  [os.path.join("und_smimages", name + ".png") for name in names]
     panorama.load_weights_and_masks(weightsfile, maskfile)
 
@@ -33,11 +33,11 @@ def init(names,paramsfile,images,weightsfile,maskfile,is_detect) -> tuple[Fishey
 if __name__ == "__main__":
     print("init")
     names = ['front','back', 'left', 'right']
-    paramsfile = [os.path.join("./TankPanorama/my_yaml", name + ".yaml") for name in names]
-    images = [os.path.join("./TankPanorama/und_smimages", name + ".png") for name in names]
+    paramsfile = [os.path.join("./my_yaml", name + ".yaml") for name in names]
+    images = [os.path.join("./und_smimages", name + ".png") for name in names]
     weightsfile = "weights.png"
     maskfile = "masks.png"
-    fisheyes,panorama,images = init(names,paramsfile,images,weightsfile,maskfile,True)
+    fisheyes,panorama,images = init(names,paramsfile,images,weightsfile,maskfile)
     print("init finish")
     decs = []
     while True:
@@ -45,12 +45,6 @@ if __name__ == "__main__":
         for (f,img) in zip(fisheyes,images):
             f.queue_in.put(img)
         image = panorama.buffer.get()
-        if panorama.detection.out_queue.full():
-            decs = panorama.detection.out_queue.get()
-        print(decs)
-        if decs:
-            image = panorama.detection.draw(image, decs)
-            
         cv2.imshow("panorama", cv2.resize(image, None, fx=0.7, fy=0.7))
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
