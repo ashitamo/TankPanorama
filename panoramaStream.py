@@ -20,8 +20,8 @@ from run_live import init
 
 PORT = 8554
 URL = '/video_stream'
-WIDTH = 1800
-HEIGHT = 900
+WIDTH = 900
+HEIGHT = 450
 FPS = 24
 staticBool = True
 now_dir = os.path.dirname(os.path.abspath(__file__))
@@ -49,7 +49,7 @@ class SensorFactory(GstRtspServer.RTSPMediaFactory):
         self.launch_string = 'appsrc name=source is-live=true block=true format=GST_FORMAT_TIME ' \
                              'caps=video/x-raw,format=BGR,width={},height={},framerate={}/1 ' \
                              '! videoconvert ! video/x-raw,format=I420 ' \
-                             '! x264enc speed-preset=ultrafast tune=zerolatency ' \
+                             '! x264enc speed-preset=ultrafast tune=zerolatency bitrate=2000' \
                              '! rtph264pay config-interval=1 name=pay0 pt=96' \
                              .format(WIDTH, HEIGHT, self.fps)
     # method to capture the video feed from the camera and push it to the

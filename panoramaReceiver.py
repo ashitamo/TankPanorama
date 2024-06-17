@@ -5,6 +5,9 @@ import os
 import time
 from ultralytics import YOLO
 import random
+import ffmpeg
+import numpy as np
+
 
 class Detection(threading.Thread):
     def __init__(self,weight_path):
@@ -61,12 +64,30 @@ class Detection(threading.Thread):
                 self.out_queue.put(decs, timeout=0.1)
 
 class PanoramaReceiver(threading.Thread):
-    def __init__(self):
+    def __init__(self,source="rtsp://127.0.0.1/video_stream"):
         super().__init__()
         self.daemon = True
         self.stopflag = False
         self.out_queue = queue.Queue(1)
-        self.cap = cv2.VideoCapture("output1.mp4")
+        probe = ffmpeg.probe(source)
+        cap_info = next(x for x in probe['streams'] if x['codec_type'] == 'video')
+        print("fps: {}".format(cap_info['r_frame_rate']))
+        self.width = cap_info['width']           # 获取视频流的宽度
+        self.height = cap_info['height']         # 获取视频流的高度
+        up, down = str(cap_info['r_frame_rate']).split('/')
+        self.fps = eval(up) / eval(down)
+        args = {
+            "rtsp_transport": "tcp",
+            "fflags": "nobuffer",
+            "flags": "low_delay"
+        }    # 添加参数
+        self.ffmpegProcess = (
+            ffmpeg
+            .input(source, **args)
+            .output('pipe:', format='rawvideo', pix_fmt='rgb24')
+            .overwrite_output()
+            .run_async(pipe_stdout=True)
+        )
 
     def copyMakeBorder(self,image):
         padding = int( (image.shape[1]/2 - image.shape[0]) // 2)
@@ -75,7 +96,11 @@ class PanoramaReceiver(threading.Thread):
 
     def run(self):
         while not self.stopflag:
-            image = self.cap.read()[1]
+            in_bytes = self.ffmpegProcess.stdout.read(self.width * self.height * 3)     # 读取图片
+            if not in_bytes:
+                break
+            in_frame = np.frombuffer(in_bytes, np.uint8).reshape([self.height, self.width, 3])
+            image = cv2.cvtColor(in_frame, cv2.COLOR_RGB2BGR)  # 转成BGR
             self.out_queue.put(image)
 
 def init():
