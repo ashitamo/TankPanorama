@@ -31,6 +31,7 @@ if __name__ == "__main__":
         #cv2.imshow(f"cy{i}", cv2.resize(cy, None, fx=0.9, fy=0.9))
         cy = fisheyes[i].warp_spherical(aligns[i])
         cv2.imshow(f"ccy{i}", cv2.resize(cy, None, fx=0.9, fy=0.9))
+        cv2.imshow(f"onecy{i}", cv2.resize(onecy, None, fx=0.9, fy=0.9))
     panorama = Panorama(onecys)
 
     G,M = panorama.get_weights_and_masks()

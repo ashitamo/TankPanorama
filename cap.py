@@ -7,14 +7,14 @@ import pickle
 import setting
 import sys
 
-number = 0
-name = "front"
-c = 3
+number = 1
+name = "left"
+c = 4
 
 if sys.platform == "win32":
-    cam1 = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+    cam1 = cv2.VideoCapture(number, cv2.CAP_DSHOW)
 else:
-    cam1 = cv2.VideoCapture(0)
+    cam1 = cv2.VideoCapture(number)
 
 cam1.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
 desired_width = 640 # 你想設定的寬度

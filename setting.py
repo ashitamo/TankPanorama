@@ -6,7 +6,7 @@ camera_names = ["front", "back", "left", "right"]
 '''
 73*50 cm
 '''
-sph_foc_len = 420# 統一球體半徑
+sph_foc_len = 410# 統一球體半徑
 
 sfovx = 90 #每個相機裁切的fov x 方向大小
 sfovy = 70 #每個相機裁切的fov y 方向大小
@@ -16,15 +16,15 @@ targeth = 700 # 去畸變換後的高
 
 f = 238# 大約鏡頭焦距
 patternsize = 70 # 真實基板高 (cm)
-bodw =  1021 # 基板寬
-bodh = 190 # 基板高
+bodw =  1000 # 基板寬
+bodh = 180 # 基板高
 h1 = bodh*f/(targeth//2-bodh) # 真實基板高 (pixel)
 pc_ratio = h1/patternsize # pixel : cm
 
 cx,cy = (targetw/2, targeth/2)
 albotw = (targeth-cy-bodh) * bodw / (targeth-cy)
 
-bs = 0
+bs = 25
 flboth = ((bs+patternsize)*pc_ratio*targeth//2)/((bs+patternsize)*pc_ratio+f)
 flbotw = (targeth-cy-(flboth)) * bodw / (targeth-cy)
 
@@ -33,10 +33,10 @@ flbodw = (targeth-cy-flbodh) * bodw / (targeth-cy)
 
 align_project_keypoing = {
     "front":[
-        [(targetw-flbotw)/2,targeth-flboth],
-        [(targetw+flbotw)/2,targeth-flboth],
-        [(targetw-flbodw)/2,targeth-flbodh],
-        [(targetw+flbodw)/2,targeth-flbodh]
+        [(targetw-albotw)/2,targeth-bodh],
+        [(targetw+albotw)/2,targeth-bodh],
+        [(targetw-bodw)/2,targeth],
+        [(targetw+bodw)/2,targeth]
     ],
     "back":[
         [(targetw-flbotw)/2,targeth-flboth],

@@ -86,9 +86,16 @@ class Panorama(threading.Thread):
 
         self.OV_FOV = 20
         self.F_FOV = (30 , 30) #120 ->100 50,50
+        self.L_FOV = (35 , 20) #110 -> 90 50,40  
+        self.R_FOV = (20 , 35) #110 -> 90 40,50
+        self.B_FOV = (15 , 15) #100 -> 80 40,40
+        '''
+        self.OV_FOV = 20
+        self.F_FOV = (30 , 30) #120 ->100 50,50
         self.L_FOV = (30 , 20) #110 -> 90 50,40  
         self.R_FOV = (20 , 30) #110 -> 90 40,50
         self.B_FOV = (20 , 20) #100 -> 80 40,40
+        '''
 
         self.ROI_F,self.ROI_F_OVL,self.ROI_F_OVR = utils.dfov_to_pixel(self.F_FOV[0],self.F_FOV[1],setting.sph_foc_len,self.cx,self.cy,self.OV_FOV)
         self.ROI_L,self.ROI_L_OVL,self.ROI_L_OVR = utils.dfov_to_pixel(self.L_FOV[0],self.L_FOV[1],setting.sph_foc_len,self.cx,self.cy,self.OV_FOV)
