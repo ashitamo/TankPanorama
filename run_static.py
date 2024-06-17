@@ -4,7 +4,7 @@ import os,time
 from panorama import Panorama
 
 
-def init(names,paramsfile,images,weightsfile,maskfile) -> tuple[Fisheye,Panorama]:
+def init(names,paramsfile,images,weightsfile,maskfile) -> tuple[Fisheye,Panorama,list]:
     fisheyes = [Fisheye(p, n) for p,n in zip(paramsfile, names)]
     cys = []
     for i in range(4):
