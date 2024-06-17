@@ -1,15 +1,8 @@
 import cv2
-import numpy as np
-import setting
-from surround_view import utils
 from fisheye import Fisheye
 import os,time
 from panorama import Panorama
-import threading
-import queue
-from ultralytics import YOLO
-from ultralytics.utils.plotting import Annotator, colors
-from collections import defaultdict
+
 
 def init(names,paramsfile,images,weightsfile,maskfile) -> tuple[Fisheye,Panorama]:
     fisheyes = [Fisheye(p, n) for p,n in zip(paramsfile, names)]
