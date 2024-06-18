@@ -14,8 +14,12 @@ import argparse
 import time
 import sys
 import os
-from run_live import init
-#from run_static import init
+staticBool = False
+
+if staticBool:
+    from run_static import init
+else:
+    from run_live import init
 
 
 PORT = 8554
@@ -23,7 +27,7 @@ URL = '/video_stream'
 WIDTH = 900
 HEIGHT = 450
 FPS = 24
-staticBool = True
+
 now_dir = os.path.dirname(os.path.abspath(__file__))
 
 # import required library like Gstreamer and GstreamerRtspServer
