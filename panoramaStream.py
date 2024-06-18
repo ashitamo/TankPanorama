@@ -24,8 +24,8 @@ else:
 
 PORT = 8554
 URL = '/video_stream'
-WIDTH = 900
-HEIGHT = 450
+WIDTH = 1700/2
+HEIGHT = 500/2
 FPS = 24
 
 now_dir = os.path.dirname(os.path.abspath(__file__))

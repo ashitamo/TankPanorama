@@ -101,6 +101,7 @@ class PanoramaReceiver(threading.Thread):
                 break
             in_frame = np.frombuffer(in_bytes, np.uint8).reshape([self.height, self.width, 3])
             image = cv2.cvtColor(in_frame, cv2.COLOR_RGB2BGR)  # 转成BGR
+            image = self.copyMakeBorder(image)
             self.out_queue.put(image)
 
 def init():
