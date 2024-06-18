@@ -14,6 +14,7 @@ import argparse
 import time
 import sys
 import os
+import setting
 staticBool = False
 
 if staticBool:
@@ -24,8 +25,8 @@ else:
 
 PORT = 8554
 URL = '/video_stream'
-WIDTH = 850
-HEIGHT = 250
+WIDTH = setting.streamSize[0]
+HEIGHT = setting.streamSize[1]
 FPS = 24
 
 now_dir = os.path.dirname(os.path.abspath(__file__))

@@ -146,6 +146,9 @@ project_keypoints = {
 # car_image = cv2.imread(os.path.join(os.getcwd(), "images", "car.png"))
 # car_image = cv2.resize(car_image, (xr - xl, yb - yt))
 
+originalSize = (1700,500)
+streamSize = (640,480)
+
 def create_mesh_image(rows, cols, cell_size, line_color=(255, 255, 255), line_thickness=4):
     # 创建空白图像
     image = np.zeros((rows * cell_size, cols * cell_size, 3), dtype=np.uint8)

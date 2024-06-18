@@ -7,7 +7,7 @@ from ultralytics import YOLO
 import random
 import ffmpeg
 import numpy as np
-
+import setting
 
 class Detection(threading.Thread):
     def __init__(self,weight_path):
@@ -101,8 +101,10 @@ class PanoramaReceiver(threading.Thread):
                 break
             in_frame = np.frombuffer(in_bytes, np.uint8).reshape([self.height, self.width, 3])
             image = cv2.cvtColor(in_frame, cv2.COLOR_RGB2BGR)  # 转成BGR
+            image = cv2.resize(image, setting.originalSize)
             image = self.copyMakeBorder(image)
             self.out_queue.put(image)
+        self.ffmpegProcess.kill()
 
 def init():
     panoramaReceiver = PanoramaReceiver()
