@@ -24,8 +24,8 @@ else:
 
 PORT = 8554
 URL = '/video_stream'
-WIDTH = 1700
-HEIGHT = 500
+WIDTH = 850
+HEIGHT = 250
 FPS = 24
 
 now_dir = os.path.dirname(os.path.abspath(__file__))
@@ -65,8 +65,9 @@ class SensorFactory(GstRtspServer.RTSPMediaFactory):
         frame =self.panorama.buffer.get()
         # It is better to change the resolution of the camera 
         # instead of changing the image shape as it affects the image quality.
-        frame = cv2.resize(frame, (WIDTH, HEIGHT), interpolation = cv2.INTER_LINEAR)
         cv2.putText(frame, '%f' % (int(self.number_frames)), (10, 10),  cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        frame = cv2.resize(frame, (WIDTH, HEIGHT), interpolation = cv2.INTER_LINEAR)
+       
         data = frame.tobytes()
         buf = Gst.Buffer.new_allocate(None, len(data), None)
         buf.fill(0, data)
