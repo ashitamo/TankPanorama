@@ -126,6 +126,6 @@ if __name__ == "__main__":
         image = detection.draw(image, decs)
         
         cv2.imshow("image", cv2.resize(image, None, fx=0.7, fy=0.7))
-        cv2.waitKey(1)
-        sl = 0.06 - (time.time() - last)
-        time.sleep(0 if sl < 0 else sl)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            print("close")
+            break
