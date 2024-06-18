@@ -64,6 +64,7 @@ if __name__ == "__main__":
         
         image = panorama.buffer.get()
         cv2.imshow("panorama", cv2.resize(image, None, fx=0.7, fy=0.7))
+        writer.write(image)
         # lightness(image)
         # print(ex)    
         # for i in fisheyes:
