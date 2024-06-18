@@ -64,7 +64,7 @@ class Detection(threading.Thread):
                 self.out_queue.put(decs, timeout=0.1)
 
 class PanoramaReceiver(threading.Thread):
-    def __init__(self,source="rtsp://10.147.18.163:8554/video_stream"):
+    def __init__(self,source="rtsp://10.22.6.103:8554/video_stream"):
         super().__init__()
         self.daemon = True
         self.stopflag = False
