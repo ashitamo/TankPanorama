@@ -64,7 +64,7 @@ class SensorFactory(GstRtspServer.RTSPMediaFactory):
         # instead of changing the image shape as it affects the image quality.
         frame = cv2.resize(frame, (WIDTH, HEIGHT), interpolation = cv2.INTER_LINEAR)
         cv2.putText(frame, '%f' % (int(self.number_frames)), (10, 10),  cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-        data = frame.tostring()
+        data = frame.tobytes()
         buf = Gst.Buffer.new_allocate(None, len(data), None)
         buf.fill(0, data)
         buf.duration = self.duration
