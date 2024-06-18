@@ -106,10 +106,10 @@ class PanoramaReceiver(threading.Thread):
             self.out_queue.put(image)
         self.ffmpegProcess.kill()
 
-def init():
+def init(weight_path="yolov8n.pt"):
     panoramaReceiver = PanoramaReceiver()
     panoramaReceiver.start()
-    detection = Detection("yolov8n.pt")
+    detection = Detection(weight_path)
     detection.start()
     return panoramaReceiver, detection
 
