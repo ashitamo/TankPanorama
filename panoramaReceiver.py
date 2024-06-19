@@ -106,8 +106,8 @@ class PanoramaReceiver(threading.Thread):
             self.out_queue.put(image)
         self.ffmpegProcess.kill()
 
-def init(weight_path="yolov8n.pt"):
-    panoramaReceiver = PanoramaReceiver()
+def init(weight_path="yolov8n.pt",source="rtsp://10.22.6.103:8554/video_stream"):
+    panoramaReceiver = PanoramaReceiver(source)
     panoramaReceiver.start()
     detection = Detection(weight_path)
     detection.start()
