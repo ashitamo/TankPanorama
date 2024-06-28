@@ -41,7 +41,9 @@ class Detection(threading.Thread):
     def draw(self, image, decs):
         for dec in decs:
             xyxy = dec["lefttop"] + dec["rightbottom"]
-            deg = (xyxy[2] + xyxy[0])/2
+            deg = ((xyxy[2] + xyxy[0])/2-135)
+            if deg > 180:
+                deg = deg - 360
             xyxy[0] = xyxy[0]/360 * image.shape[1]
             xyxy[1] = xyxy[1]/180 * image.shape[0]
             xyxy[2] = xyxy[2]/360 * image.shape[1]
@@ -63,42 +65,78 @@ class Detection(threading.Thread):
             if not self.out_queue.full():
                 self.out_queue.put(decs, timeout=0.1)
 
+
 class PanoramaReceiver(threading.Thread):
+    ffmpegProcess = None
     def __init__(self,source="rtsp://10.22.6.103:8554/video_stream"):
         super().__init__()
         self.daemon = True
         self.stopflag = False
         self.out_queue = queue.Queue(1)
-        probe = ffmpeg.probe(source)
-        cap_info = next(x for x in probe['streams'] if x['codec_type'] == 'video')
-        print("fps: {}".format(cap_info['r_frame_rate']))
-        self.width = cap_info['width']           # 获取视频流的宽度
-        self.height = cap_info['height']         # 获取视频流的高度
-        up, down = str(cap_info['r_frame_rate']).split('/')
-        self.fps = eval(up) / eval(down)
+        self.source = source
+        # probe = ffmpeg.probe(source)
+        # cap_info = next(x for x in probe['streams'] if x['codec_type'] == 'video')
+        # print("fps: {}".format(cap_info['r_frame_rate']))
+        # self.width = cap_info['width']           # 获取视频流的宽度
+        # self.height = cap_info['height']         # 获取视频流的高度
+        # up, down = str(cap_info['r_frame_rate']).split('/')
+        # self.fps = eval(up) / eval(down)
+        # args = {
+        #     "rtsp_transport": "tcp",
+        #     "fflags": "nobuffer",
+        #     "flags": "low_delay"
+        # }    # 添加参数
+        # self.ffmpegProcess = (
+        #     ffmpeg
+        #     .input(source, **args)
+        #     .output('pipe:', format='rawvideo', pix_fmt='rgb24')
+        #     .overwrite_output()
+        #     .run_async(pipe_stdout=True)
+        # )
+    def init_ffmpeg(self):
         args = {
             "rtsp_transport": "tcp",
             "fflags": "nobuffer",
             "flags": "low_delay"
         }    # 添加参数
+        def getStreamInfo():
+            probe = ffmpeg.probe(self.source)
+            cap_info = next(x for x in probe['streams'] if x['codec_type'] == 'video')
+            print("fps: {}".format(cap_info['r_frame_rate']))
+            self.width = cap_info['width']           # 获取视频流的宽度
+            self.height = cap_info['height']         # 获取视频流的高度
+            up, down = str(cap_info['r_frame_rate']).split('/')
+            self.fps = eval(up) / eval(down)
+
+        getStreamInfo()
         self.ffmpegProcess = (
             ffmpeg
-            .input(source, **args)
+            .input(self.source, **args)
             .output('pipe:', format='rawvideo', pix_fmt='rgb24')
             .overwrite_output()
             .run_async(pipe_stdout=True)
         )
+
 
     def copyMakeBorder(self,image):
         padding = int( (image.shape[1]/2 - image.shape[0]) // 2)
         image = cv2.copyMakeBorder(image, padding, padding, 0, 0, cv2.BORDER_CONSTANT,value=[0,0,0])
         return image
 
+    def getFrame(self):
+        if not self.out_queue.empty():
+            return self.out_queue.get()
+        return None
+
     def run(self):
         while not self.stopflag:
+            if self.ffmpegProcess is None:
+                self.init_ffmpeg()
             in_bytes = self.ffmpegProcess.stdout.read(self.width * self.height * 3)     # 读取图片
             if not in_bytes:
-                break
+                self.ffmpegProcess.kill()
+                self.ffmpegProcess = None
+                continue
             in_frame = np.frombuffer(in_bytes, np.uint8).reshape([self.height, self.width, 3])
             image = cv2.cvtColor(in_frame, cv2.COLOR_RGB2BGR)  # 转成BGR
             image = cv2.resize(image, setting.originalSize)
