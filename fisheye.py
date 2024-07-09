@@ -157,6 +157,48 @@ class Fisheye(threading.Thread):
     def warp_spherical(self,img):
         return cv2.remap(img, self.sphmap_x[self.ROI_y[0]:self.ROI_y[1],self.ROI_x[0]:self.ROI_x[1]], self.sphmap_y[self.ROI_y[0]:self.ROI_y[1],self.ROI_x[0]:self.ROI_x[1]], cv2.INTER_LINEAR)
 
+    def drawForwadLine(self,image,camera=None,t=5):
+        def getLine(start,end,s=600,st = 100):
+            l = end - start
+            l = l / np.linalg.norm(l)
+            ss = np.arange(0, s, st)
+            ss = np.vstack((ss, ss)).T
+            l = ss*l
+            l[:,0] = l[:,0] + start[0]
+            l[:,1] = l[:,1] + start[1]
+            #cv2.polylines(image, [l.astype(np.int32)], False, (255, 0, 0), 5)
+            return l[:,0],l[:,1]
+        def draw(image,x,y):
+            x = x-camera.NEW_K[0,2]
+            y = y-camera.NEW_K[1,2]
+            z = np.ones_like(x)
+            z = z*setting.sph_foc_len
+            r = np.sqrt(x**2+y**2+z**2)
+            phi = np.arctan(x/z)
+            theta = np.arctan(y/r)
+            p = np.array((phi,theta,r)).T.reshape(-1,3)
+            p = p*setting.sph_foc_len
+            p = p+np.array([camera.NEW_K[0,2],camera.NEW_K[1,2],0]).reshape(-1,3)
+            p = p[:,:2]-np.array((camera.ROI_x[0],camera.ROI_y[0])).reshape(-1,2)
+            cv2.polylines(image, [p.astype(np.int32)], False, (0, 255, 0), t)
+
+        if camera is None:
+            camera = self
+        x,y = getLine(np.array([600, int(setting.targeth)+250]),
+                        np.array([setting.cx, setting.cy])
+                    )
+        rx,ry = getLine(np.array([int(setting.targetw)-600, int(setting.targeth)+250]),
+                        np.array([setting.cx, setting.cy])
+                    )
+        # xl1,yl1 = getLine(np.array([x[2],y[2]]),
+        #                 np.array([x[2] + 100 ,y[2]]),
+        #                 s = int(setting.pc_ratio*50),
+        #                 st = 10
+        #             )
+        draw(image,x,y)
+        draw(image,rx,ry)
+        #draw(image,xl1,yl1)
+    
     def save_data(self):
         fs = cv2.FileStorage(self.paramsfile, cv2.FILE_STORAGE_WRITE)
         fs.write("camera_matrix", self.K)
@@ -180,9 +222,12 @@ class Fisheye(threading.Thread):
                     continue
             if image is not None:
                 if self.cap_number is not None:
-                    self.queue_out.put(self.warpone(image))
+                    image = self.warpone(image)
                 else:
-                    self.queue_out.put(self.warpone(cv2.imread(image)))
+                    image = self.warpone(cv2.imread(image))
+                if self.camera_name == "front":
+                    self.drawForwadLine(image)
+                self.queue_out.put(image)
 
             
 if __name__ == "__main__":
