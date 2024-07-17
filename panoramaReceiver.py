@@ -131,15 +131,17 @@ class PanoramaReceiver(threading.Thread):
     def run(self):
         while not self.stopflag:
             if self.ffmpegProcess is None:
+                print("CONNECTING TO RTSP")
                 self.init_ffmpeg()
             in_bytes = self.ffmpegProcess.stdout.read(self.width * self.height * 3)     # 读取图片
             if not in_bytes:
                 self.ffmpegProcess.kill()
                 self.ffmpegProcess = None
+                print("WARNING: RTSP DISCONNECTED")
                 continue
             in_frame = np.frombuffer(in_bytes, np.uint8).reshape([self.height, self.width, 3])
             image = cv2.cvtColor(in_frame, cv2.COLOR_RGB2BGR)  # 转成BGR
-            image = cv2.resize(image, setting.originalSize)
+            image = cv2.resize(image, (setting.originalSize[0], int(setting.originalSize[1]*0.8)))
             image = self.copyMakeBorder(image)
             self.out_queue.put(image)
         self.ffmpegProcess.kill()
