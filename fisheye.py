@@ -190,14 +190,20 @@ class Fisheye(threading.Thread):
         rx,ry = getLine(np.array([int(setting.targetw)-600, int(setting.targeth)+250]),
                         np.array([setting.cx, setting.cy])
                     )
-        # xl1,yl1 = getLine(np.array([x[2],y[2]]),
-        #                 np.array([x[2] + 100 ,y[2]]),
-        #                 s = int(setting.pc_ratio*50),
-        #                 st = 10
-        #             )
+        xl1,yl1 = getLine(np.array([x[2],y[2]]),
+                        np.array([x[2] + 100 ,y[2]]),
+                        s = 430,
+                        st = 10
+                    )
+        xl2,yl2 = getLine(np.array([x[4],y[4]]),
+                        np.array([x[4] + 50 ,y[4]]),
+                        s = 250,
+                        st = 10
+                    )
         draw(image,x,y)
         draw(image,rx,ry)
-        #draw(image,xl1,yl1)
+        draw(image,xl1,yl1)
+        draw(image,xl2,yl2)
     
     def save_data(self):
         fs = cv2.FileStorage(self.paramsfile, cv2.FILE_STORAGE_WRITE)
@@ -225,8 +231,8 @@ class Fisheye(threading.Thread):
                     image = self.warpone(image)
                 else:
                     image = self.warpone(cv2.imread(image))
-                if self.camera_name == "front":
-                    self.drawForwadLine(image)
+                # if self.camera_name == "front":
+                #     self.drawForwadLine(image)
                 self.queue_out.put(image)
 
             
