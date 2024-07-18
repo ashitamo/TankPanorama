@@ -27,7 +27,7 @@ PORT = 8554
 URL = '/video_stream'
 WIDTH = setting.streamSize[0]
 HEIGHT = setting.streamSize[1]
-FPS = 24
+FPS = 20
 
 now_dir = os.path.dirname(os.path.abspath(__file__))
 
