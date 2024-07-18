@@ -66,7 +66,7 @@ class SensorFactory(GstRtspServer.RTSPMediaFactory):
         frame =self.panorama.buffer.get()
         # It is better to change the resolution of the camera 
         # instead of changing the image shape as it affects the image quality.
-        cv2.putText(frame, '%d' % (int(self.number_frames)), (650, 400),  cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        cv2.putText(frame, '%d' % (int(self.number_frames)%1000), (650, 450),  cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         frame = cv2.resize(frame, (WIDTH, HEIGHT), interpolation = cv2.INTER_LINEAR)
        
         data = frame.tobytes()
