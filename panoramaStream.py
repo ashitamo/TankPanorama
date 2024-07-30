@@ -51,11 +51,11 @@ class SensorFactory(GstRtspServer.RTSPMediaFactory):
         self.number_frames = 0
         self.duration = 1 / FPS * Gst.SECOND  # duration of a frame in nanoseconds
         self.launch_string = 'appsrc name=source is-live=true block=true format=GST_FORMAT_TIME ' \
-                             'caps=video/x-raw,format=BGR,width={},height={},framerate={}/1 ' \
-                             '! videoconvert ! video/x-raw,format=I420 ' \
-                             '! x264enc bitrate=1200 speed-preset=ultrafast tune=zerolatency ' \
-                             '! rtph264pay config-interval=1 name=pay0 pt=96' \
-                             .format(WIDTH, HEIGHT, FPS)
+                     'caps=video/x-raw,format=BGR,width={},height={},framerate={}/1 ' \
+                     '! videoconvert ! video/x-raw,format=I420 ' \
+                     '! nvh265enc bitrate=1200 preset=ultrafast ' \
+                     '! rtph265pay config-interval=1 name=pay0 pt=96' \
+                     .format(WIDTH, HEIGHT, FPS)
     # method to capture the video feed from the camera and push it to the
     # streaming buffer.
     def on_need_data(self, src, length):
