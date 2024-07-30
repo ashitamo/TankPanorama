@@ -50,9 +50,9 @@ class Detection(threading.Thread):
             xyxy[3] = xyxy[3]/180 * image.shape[0]
             color = (128, 255, 0)
             cv2.rectangle(image, (int(xyxy[0]), int(xyxy[1])), (int(xyxy[2]), int(xyxy[3])), color, 2)
-            cv2.putText(image, "cls: " + str(int(dec["class"])), (int(xyxy[0]), int(xyxy[1])-10), cv2.FONT_HERSHEY_SIMPLEX, 1.2, color, 2)
-            cv2.putText(image, "deg: " + str(int(deg)), (int(xyxy[0]), int(xyxy[1])-40), cv2.FONT_HERSHEY_SIMPLEX, 1.2, color, 2)
-            cv2.putText(image, "id: " + str(int(dec["track_id"])), (int(xyxy[0]), int(xyxy[1])-70), cv2.FONT_HERSHEY_SIMPLEX, 1.2, color, 2)
+            cv2.putText(image, "cls: " + str(int(dec["class"])), (int(xyxy[0]), int(xyxy[1])-5), cv2.FONT_HERSHEY_SIMPLEX, 0.75, color, 2)
+            cv2.putText(image, "deg: " + str(int(deg)), (int(xyxy[0]), int(xyxy[1])-22), cv2.FONT_HERSHEY_SIMPLEX, 0.75, color, 2)
+            cv2.putText(image, "id: " + str(int(dec["track_id"])), (int(xyxy[0]), int(xyxy[1])-39), cv2.FONT_HERSHEY_SIMPLEX, 0.75, color, 2)
         return image
     def run(self):
         while not self.stopflag:
@@ -155,7 +155,7 @@ def init(weight_path="yolov8n.pt",source="rtsp://10.147.18.163:8554/video_stream
 
 if __name__ == "__main__":
     print("init")
-    panoramaReceiver, detection = init()
+    panoramaReceiver, detection = init(source="rtsp://192.168.0.24:8554/video_stream")
     print("init finish")
     decs = []
     while True:

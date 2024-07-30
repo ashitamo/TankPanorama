@@ -63,7 +63,7 @@ class SensorFactory(GstRtspServer.RTSPMediaFactory):
         if staticBool:
             for f,name,img in zip(self.fisheyes,self.names,self.images):
                 f.queue_in.put(img)
-        frame =self.panorama.buffer.get()
+        frame = self.panorama.buffer.get()
         # It is better to change the resolution of the camera 
         # instead of changing the image shape as it affects the image quality.
         cv2.putText(frame, '%d' % (int(self.number_frames)%1000), (650, 450),  cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
