@@ -54,10 +54,11 @@ class SensorFactory(GstRtspServer.RTSPMediaFactory):
                      'caps=video/x-raw,format=BGR,width={},height={},framerate={}/1 ' \
                      '! videoconvert ! video/x-raw,format=NV12 ' \
                      '! nvvidconv ! video/x-raw(memory:NVMM),format=NV12 ' \
-                     '! nvv4l2h265enc preset-level=1 insert-sps-pps=1 iframeinterval=30 control-rate=2 profile=baseline' \
+                     '! nvv4l2h265enc control-rate=1 bitrate=4000000 preset-level=1 insert-sps-pps=1 iframeinterval=30 ' \
                      '! h265parse ' \
                      '! rtph265pay config-interval=1 name=pay0 pt=96' \
                      .format(WIDTH, HEIGHT, FPS)
+
         
         ''' x265enc
         self.launch_string = 'appsrc name=source is-live=true block=true format=GST_FORMAT_TIME ' \

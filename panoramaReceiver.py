@@ -68,7 +68,7 @@ class Detection(threading.Thread):
 
 class PanoramaReceiver(threading.Thread):
     ffmpegProcess = None
-    def __init__(self,source="rtsp://10.22.6.103:8554/video_stream"):
+    def __init__(self,source="rtsp://10.147.18.163:8554/video_stream"):
         super().__init__()
         self.daemon = True
         self.stopflag = False
@@ -155,7 +155,7 @@ def init(weight_path="yolov8n.pt",source="rtsp://10.147.18.163:8554/video_stream
 
 if __name__ == "__main__":
     print("init")
-    panoramaReceiver, detection = init(source="rtsp://192.168.0.24:8554/video_stream")
+    panoramaReceiver, detection = init(source="rtsp://10.147.18.163:8554/video_stream")
     print("init finish")
     decs = []
     while True:
