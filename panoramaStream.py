@@ -50,34 +50,32 @@ class SensorFactory(GstRtspServer.RTSPMediaFactory):
         self.fisheyes,self.panorama,self.images = init(self.names,paramsfile,images,weightsfile,maskfile)
         self.number_frames = 0
         self.duration = 1 / FPS * Gst.SECOND  # duration of a frame in nanoseconds
+
+        #h265
         self.launch_string = 'appsrc name=source is-live=true block=true format=GST_FORMAT_TIME ' \
             'caps=video/x-raw,format=BGR,width={},height={},framerate={}/1 ' \
             '! videoconvert ! video/x-raw,format=NV12 ' \
             '! nvvidconv ! video/x-raw(memory:NVMM),format=NV12 ' \
-            '! nvv4l2h265enc control-rate=1 bitrate=2500000 preset-level=1 insert-sps-pps=1 iframeinterval=30 ' \
+            '! nvv4l2h265enc control-rate=1 bitrate=200000 preset-level=1 insert-sps-pps=1 iframeinterval=20 ' \
             '! h265parse ' \
             '! rtph265pay config-interval=1 name=pay0 pt=96' \
             .format(WIDTH, HEIGHT, FPS)
         
+        #x265enc
+        # self.launch_string = 'appsrc name=source is-live=true block=true format=GST_FORMAT_TIME ' \
+        #     'caps=video/x-raw,format=BGR,width={},height={},framerate={}/1 ' \
+        #     '! videoconvert ! video/x-raw,format=I420 ' \
+        #     '! x265enc bitrate=200 speed-preset=ultrafast tune=zerolatency key-int-max=20 ' \
+        #     '! rtph265pay config-interval=1 name=pay0 pt=96' \
+        #     .format(WIDTH, HEIGHT, FPS)
         
-        ''' x265enc
-        self.launch_string = 'appsrc name=source is-live=true block=true format=GST_FORMAT_TIME ' \
-            'caps=video/x-raw,format=BGR,width={},height={},framerate={}/1 ' \
-            '! videoconvert ! video/x-raw,format=I420 ' \
-            '! x265enc bitrate=2500000 speed-preset=ultrafast tune=zerolatency key-int-max=50 ' \
-            '! rtph265pay config-interval=1 name=pay0 pt=96' \
-            .format(WIDTH, HEIGHT, FPS)
-        ''' 
-
-
-        '''x264
-        self.launch_string = 'appsrc name=source is-live=true block=true format=GST_FORMAT_TIME ' \
-            'caps=video/x-raw,format=BGR,width={},height={},framerate={}/1 ' \
-            '! videoconvert ! video/x-raw,format=I420 ' \
-            '! x264enc bitrate=2500000 speed-preset=ultrafast tune=zerolatency ' \
-            '! rtph264pay config-interval=1 name=pay0 pt=96' \
-            .format(WIDTH, HEIGHT, FPS)
-        '''
+        #x264
+        # self.launch_string = 'appsrc name=source is-live=true block=true format=GST_FORMAT_TIME ' \
+        #     'caps=video/x-raw,format=BGR,width={},height={},framerate={}/1 ' \
+        #     '! videoconvert ! video/x-raw,format=I420 ' \
+        #     '! x264enc bitrate=250 speed-preset=ultrafast tune=zerolatency ' \
+        #     '! rtph264pay config-interval=1 name=pay0 pt=96' \
+        #     .format(WIDTH, HEIGHT, FPS)
     # method to capture the video feed from the camera and push it to the
     # streaming buffer.
     def on_need_data(self, src, length):
