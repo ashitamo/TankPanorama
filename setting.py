@@ -147,7 +147,7 @@ project_keypoints = {
 # car_image = cv2.resize(car_image, (xr - xl, yb - yt))
 
 originalSize = (1700,500)
-streamSize = (1920,1080)
+streamSize = (1200,400)
 
 def create_mesh_image(rows, cols, cell_size, line_color=(255, 255, 255), line_thickness=4):
     # 创建空白图像
