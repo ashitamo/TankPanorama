@@ -17,6 +17,11 @@ class Detection(threading.Thread):
         self.stopflag = False
         self.in_queue = queue.Queue(2)
         self.out_queue = queue.Queue(2)
+        self.clsColor = [
+            (0,180,0), #normal people
+            (0,0,255),
+            (0,255,0),
+        ]
 
     def boxes2AngleDistance(self,results):
         decs = []
@@ -29,30 +34,60 @@ class Detection(threading.Thread):
         else:
             track_ids = []
         for i in zip(xyxyn,cls,track_ids):
+            if i[1] not in [0]:
+                continue
             decdict = {
                 "lefttop": [i[0][0],i[0][1]],
                 "rightbottom": [i[0][2],i[0][3]],
                 "class": i[1],
-                "track_id": i[2]
+                "track_id": i[2],
+                "deg": ((i[0][2] + i[0][0])/2-135)
             }
+            if decdict["deg"] > 180:
+                decdict["deg"] = decdict["deg"] - 360
             decs.append(decdict)
         return decs
+    
+    def decs2UnityFormat(self,decs,frame_data):
+        frame_data['x0'] = []
+        frame_data['y0'] = []
+        frame_data['x1'] = []
+        frame_data['y1'] = []
+        frame_data['cls'] = []
+        frame_data['track_id'] = []
+        frame_data['deg'] = []
+        for dec in decs:
+            xyxyn = dec["lefttop"] + dec["rightbottom"]
+            if xyxyn[0] > 360:
+                xyxyn[0] = xyxyn[0] - 360
+            if xyxyn[1] > 180:
+                xyxyn[1] = xyxyn[1] - 180
+            if xyxyn[2] > 360:
+                xyxyn[2] = xyxyn[2] - 360
+            if xyxyn[3] > 180:
+                xyxyn[3] = xyxyn[3] - 180
+            frame_data['x0'].append(xyxyn[0])
+            frame_data['y0'].append(xyxyn[1])
+            frame_data['x1'].append(xyxyn[2])
+            frame_data['y1'].append(xyxyn[3])
+            frame_data['cls'].append(dec["class"])
+            frame_data['track_id'].append(dec["track_id"])
+            frame_data['deg'].append(dec["deg"])
+        return frame_data
 
     def draw(self, image, decs):
         for dec in decs:
             xyxy = dec["lefttop"] + dec["rightbottom"]
-            deg = ((xyxy[2] + xyxy[0])/2-135)
-            if deg > 180:
-                deg = deg - 360
+            deg = dec["deg"]
             xyxy[0] = xyxy[0]/360 * image.shape[1]
             xyxy[1] = xyxy[1]/180 * image.shape[0]
             xyxy[2] = xyxy[2]/360 * image.shape[1]
             xyxy[3] = xyxy[3]/180 * image.shape[0]
-            color = (128, 255, 0)
+            color = self.clsColor[int(dec["class"])]
             cv2.rectangle(image, (int(xyxy[0]), int(xyxy[1])), (int(xyxy[2]), int(xyxy[3])), color, 2)
-            cv2.putText(image, "cls: " + str(int(dec["class"])), (int(xyxy[0]), int(xyxy[1])-5), cv2.FONT_HERSHEY_SIMPLEX, 0.75, color, 2)
-            cv2.putText(image, "deg: " + str(int(deg)), (int(xyxy[0]), int(xyxy[1])-22), cv2.FONT_HERSHEY_SIMPLEX, 0.75, color, 2)
-            cv2.putText(image, "id: " + str(int(dec["track_id"])), (int(xyxy[0]), int(xyxy[1])-39), cv2.FONT_HERSHEY_SIMPLEX, 0.75, color, 2)
+            #cv2.putText(image, "cls: " + str(int(dec["class"])), (int(xyxy[0]), int(xyxy[1])-5), cv2.FONT_HERSHEY_SIMPLEX, 0.75, color, 2)
+            cv2.putText(image, str(int(deg)) , (int(xyxy[0]), int(xyxy[1])-5), cv2.FONT_HERSHEY_SIMPLEX, 0.75, color, 2)
+            #cv2.putText(image, "id: " + str(int(dec["track_id"])), (int(xyxy[0]), int(xyxy[1])-39), cv2.FONT_HERSHEY_SIMPLEX, 0.75, color, 2)
         return image
     def run(self):
         while not self.stopflag:

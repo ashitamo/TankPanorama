@@ -24,7 +24,7 @@ pc_ratio = h1/patternsize # pixel : cm
 cx,cy = (targetw/2, targeth/2)
 albotw = (targeth-cy-bodh) * bodw / (targeth-cy)
 
-bs = 25
+bs = 25 #標定版與相機的距離
 flboth = ((bs+patternsize)*pc_ratio*targeth//2)/((bs+patternsize)*pc_ratio+f)
 flbotw = (targeth-cy-(flboth)) * bodw / (targeth-cy)
 
