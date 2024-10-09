@@ -89,6 +89,27 @@ class Detection(threading.Thread):
             cv2.putText(image, str(int(deg)) , (int(xyxy[0]), int(xyxy[1])-5), cv2.FONT_HERSHEY_SIMPLEX, 0.75, color, 2)
             #cv2.putText(image, "id: " + str(int(dec["track_id"])), (int(xyxy[0]), int(xyxy[1])-39), cv2.FONT_HERSHEY_SIMPLEX, 0.75, color, 2)
         return image
+    
+    def drawSight(self,image,base,fort):
+        #fort = -fort
+        crossSize = 10
+        centerx = (base-37)/360 * image.shape[1] + image.shape[1]/2
+        centery = fort/180 * image.shape[0] + image.shape[0]/2
+        cv2.line(
+            image, 
+            (int(centerx - crossSize),int(centery)), 
+            (int(centerx + crossSize),int(centery)), 
+            (0, 0, 255),
+            2
+        )
+        cv2.line(
+            image, 
+            (int(centerx),int(centery - crossSize)), 
+            (int(centerx),int(centery + crossSize)), 
+            (0, 0, 255),
+            2
+        )
+        print(centerx,centery)
     def run(self):
         while not self.stopflag:
             try:
@@ -107,7 +128,7 @@ class PanoramaReceiver(threading.Thread):
         super().__init__()
         self.daemon = True
         self.stopflag = False
-        self.out_queue = queue.Queue(1)
+        self.out_queue = queue.Queue(2)
         self.source = source
         # probe = ffmpeg.probe(source)
         # cap_info = next(x for x in probe['streams'] if x['codec_type'] == 'video')
