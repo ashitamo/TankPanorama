@@ -109,7 +109,7 @@ class Detection(threading.Thread):
             (0, 0, 255),
             2
         )
-        print(centerx,centery)
+        #print(centerx,centery)
     def run(self):
         while not self.stopflag:
             try:
