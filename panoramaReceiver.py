@@ -34,7 +34,7 @@ class Detection(threading.Thread):
         else:
             track_ids = []
         for i in zip(xyxyn,cls,track_ids):
-            if i[1] not in [0]:
+            if i[1] not in [0,1]:
                 continue
             decdict = {
                 "lefttop": [i[0][0],i[0][1]],
@@ -198,6 +198,7 @@ class PanoramaReceiver(threading.Thread):
             in_frame = np.frombuffer(in_bytes, np.uint8).reshape([self.height, self.width, 3])
             image = cv2.cvtColor(in_frame, cv2.COLOR_RGB2BGR)  # 转成BGR
             image = cv2.resize(image, (setting.originalSize[0], int(setting.originalSize[1]*0.8)))
+            #image = cv2.resize(image,None,fx=1,fy=0.7)
             image = self.copyMakeBorder(image)
             self.out_queue.put(image)
         self.ffmpegProcess.kill()
@@ -211,7 +212,7 @@ def init(weight_path="yolov8n.pt",source="rtsp://10.147.18.163:8554/video_stream
 
 if __name__ == "__main__":
     print("init")
-    panoramaReceiver, detection = init(source="rtsp://10.147.18.163:8554/video_stream")
+    panoramaReceiver, detection = init(r'PythonClient\TankPanorama\tank.engine',source="rtsp://10.147.18.163:8554/video_stream")
     print("init finish")
     decs = []
     while True:
