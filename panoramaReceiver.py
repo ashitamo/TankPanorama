@@ -128,7 +128,7 @@ class PanoramaReceiver(threading.Thread):
         super().__init__()
         self.daemon = True
         self.stopflag = False
-        self.out_queue = queue.Queue(2)
+        self.out_queue = queue.Queue(1)
         self.source = source
         # probe = ffmpeg.probe(source)
         # cap_info = next(x for x in probe['streams'] if x['codec_type'] == 'video')
