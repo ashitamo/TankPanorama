@@ -19,6 +19,7 @@ class mergeThread(threading.Thread):
         threading.Thread.__init__(self)
         self.queue = queue.Queue(1)
         self.buffer = queue.Queue(1)
+        self.daemon = True
         self.stopflag = False
     def run(self):
         while not self.stopflag:
