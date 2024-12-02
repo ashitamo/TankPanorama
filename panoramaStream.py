@@ -27,7 +27,7 @@ PORT = 8554
 URL = '/video_stream'
 WIDTH = setting.streamSize[0]
 HEIGHT = setting.streamSize[1]
-FPS = 20
+FPS = 19
 
 now_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -56,7 +56,7 @@ class SensorFactory(GstRtspServer.RTSPMediaFactory):
             'caps=video/x-raw,format=BGR,width={},height={},framerate={}/1 ' \
             '! videoconvert ! video/x-raw,format=NV12 ' \
             '! nvvidconv ! video/x-raw(memory:NVMM),format=NV12 ' \
-            '! nvv4l2h265enc control-rate=1 bitrate=200000 preset-level=1 insert-sps-pps=1 iframeinterval=20 ' \
+            '! nvv4l2h265enc control-rate=1 bitrate=800000 preset-level=1 insert-sps-pps=1 iframeinterval=20 ' \
             '! h265parse ' \
             '! rtph265pay config-interval=1 name=pay0 pt=96' \
             .format(WIDTH, HEIGHT, FPS)
@@ -73,7 +73,7 @@ class SensorFactory(GstRtspServer.RTSPMediaFactory):
         # self.launch_string = 'appsrc name=source is-live=true block=true format=GST_FORMAT_TIME ' \
         #     'caps=video/x-raw,format=BGR,width={},height={},framerate={}/1 ' \
         #     '! videoconvert ! video/x-raw,format=I420 ' \
-        #     '! x264enc bitrate=250 speed-preset=ultrafast tune=zerolatency ' \
+        #     '! x264enc bitrate=100 speed-preset=ultrafast tune=zerolatency ' \
         #     '! rtph264pay config-interval=1 name=pay0 pt=96' \
         #     .format(WIDTH, HEIGHT, FPS)
     # method to capture the video feed from the camera and push it to the

@@ -48,6 +48,7 @@ class Fisheye(threading.Thread):
                 self.cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 3) # auto mode
                 self.cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 1) # manual mode
                 self.cap.set(cv2.CAP_PROP_EXPOSURE, 200)
+                self.cap.set(cv2.CAP_PROP_BUFFERSIZE, 2); 
         
             desired_width = 640 # 你想設定的寬度
             desired_height = 480  # 你想設定的高度
