@@ -60,6 +60,7 @@ if __name__ == "__main__":
     #     print(ex)
     # for i in fisheyes:
     #     i.cap.set(cv2.CAP_PROP_EXPOSURE, ex)
+    FPS = []
     while True:
         last = time.time()
         
@@ -79,7 +80,10 @@ if __name__ == "__main__":
             writer.release()
             print("close")
             break
-        print("FPS", round(1/ (time.time() - last), 1))
+        FPS.append(1/ (time.time() - last))
+        if len(FPS)>5:
+            del FPS[0]
+        print("FPS", round(sum(FPS)/5, 1))
 
     cv2.destroyAllWindows()
 

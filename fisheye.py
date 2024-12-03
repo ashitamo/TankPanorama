@@ -234,7 +234,11 @@ class Fisheye(threading.Thread):
                     image = self.warpone(cv2.imread(image))
                 # if self.camera_name == "front":
                 #     self.drawForwadLine(image)
+                if self.queue_out.full():
+                    self.queue_out.get()
+                    # print("get")
                 self.queue_out.put(image)
+
 
             
 if __name__ == "__main__":
