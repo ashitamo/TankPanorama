@@ -116,7 +116,7 @@ class Detection(threading.Thread):
                 image = self.in_queue.get(timeout=0.1)
             except queue.Empty:
                 continue
-            results = self.model.track(image, persist=True, verbose=False,conf=0.3)
+            results = self.model.track(image, persist=True, verbose=False,conf=0.1)
             decs = self.boxes2AngleDistance(results)
             if not self.out_queue.full():
                 self.out_queue.put(decs, timeout=0.1)
