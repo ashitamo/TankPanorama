@@ -111,5 +111,3 @@ sph_foc_len = ( bs + rt ) * pc_ratio，你可以直接執行setting.py，來得�
 ## 使用相機來查看畫面
 
 在此程式中有兩個可以測試，全景功能是否有正常運作的程式，
-
-[轉換矩陣](https://www.notion.so/a102f500306a4ca3b8fcc4bcbaadc84b?pvs=21)
