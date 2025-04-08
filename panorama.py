@@ -258,7 +258,7 @@ class Panorama(threading.Thread):
             self.stitch_all_parts()
             #self.make_white_balance()
             self.white_balance()
-            #self.copyMakeBorder()
+            self.copyMakeBorder()
             self.buffer.put(self.image)
             
 

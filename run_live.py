@@ -10,13 +10,13 @@ os.environ["OPENCV_VIDEOIO_MSMF_ENABLE_HW_TRANSFORMS"] = "0"
 def init(names,paramsfile,images,weightsfile,maskfile):
     # fisheyes = [Fisheye(p, n) for p,n in zip(paramsfile, names)]
     fisheyes = [None,None,None,None]
-    fisheyes[0] = Fisheye(paramsfile[0], names[0],2)
+    fisheyes[0] = Fisheye(paramsfile[0], names[0],4)
     print('fisheye0 ok')
-    fisheyes[1] = Fisheye(paramsfile[1], names[1],0)
+    fisheyes[1] = Fisheye(paramsfile[1], names[1],2)
     print('fisheye1 ok')
-    fisheyes[2] = Fisheye(paramsfile[2], names[2],4)
+    fisheyes[2] = Fisheye(paramsfile[2], names[2],3)
     print('fisheye2 ok')
-    fisheyes[3] = Fisheye(paramsfile[3], names[3],6)
+    fisheyes[3] = Fisheye(paramsfile[3], names[3],1)
     print('fisheye3 ok')
     cys = []
     for i in range(4):

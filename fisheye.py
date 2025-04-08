@@ -43,6 +43,10 @@ class Fisheye(threading.Thread):
         if self.cap_number is not None:
             if sys.platform == "win32":
                 self.cap = cv2.VideoCapture(self.cap_number, cv2.CAP_DSHOW)
+                self.cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 3) # auto mode
+                self.cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 1) # manual mode
+                self.cap.set(cv2.CAP_PROP_EXPOSURE, -11)
+                # self.cap.set(cv2.CAP_PROP_BUFFERSIZE, 2); 
             else:
                 self.cap = cv2.VideoCapture(self.cap_number,cv2.CAP_V4L2)
                 self.cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, 3) # auto mode
@@ -56,6 +60,7 @@ class Fisheye(threading.Thread):
             self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, desired_height)
             desired_fps = 30  # 你想設定的FPS值
             self.cap.set(cv2.CAP_PROP_FPS, desired_fps)
+
             
 
     def load_params(self, paramsfile):

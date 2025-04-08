@@ -4,8 +4,14 @@ from fisheye import Fisheye
 import setting
 from surround_view import utils
 
+foc_lenx = setting.f
+foc_leny = setting.f
 
-name = "right"
+'''
+setting.sph_foc_len 要先設定
+'''
+
+name = "front"
 yaml = "my_yaml/" + name + ".yaml"
 image = "und_smimages/" + name + ".png"
 fisheye = Fisheye(yaml, name)
@@ -18,12 +24,7 @@ align = fisheye.aling_project(undistorted)
 cv2.imshow("align", cv2.resize(align, None, fx=0.2, fy=0.2))
 cv2.waitKey(1)
 
-setting.sfovx = 120
-foc_lenx = 238
-foc_leny = 238
-'''
-setting.sph_foc_len = 666.6667 要先設定
-'''
+
 fisheye.shp_K = np.array([
     [foc_lenx , 0.00000000e+00, setting.cx],
     [0.00000000e+00, foc_leny , setting.cy],

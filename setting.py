@@ -25,6 +25,7 @@ cx,cy = (targetw/2, targeth/2)
 albotw = (targeth-cy-bodh) * bodw / (targeth-cy)
 
 bs = 25 #標定版與相機的距離
+rt = 25 #左前右三個相機裡正方形中心點的距離 (cm)
 flboth = ((bs+patternsize)*pc_ratio*targeth//2)/((bs+patternsize)*pc_ratio+f)
 flbotw = (targeth-cy-(flboth)) * bodw / (targeth-cy)
 
@@ -72,23 +73,24 @@ affine_keypoint = {
 }
 
 if __name__ == "__main__":
-    print(align_project_keypoing["front"])
-    print(sph_foc_len/pc_ratio)
-    im = np.ones((targeth, targetw,3), dtype=np.uint8)
-    cv2.line(im, (int(align_project_keypoing["front"][0][0]), int(align_project_keypoing["front"][0][1])), (int(align_project_keypoing["front"][1][0]), int(align_project_keypoing["front"][1][1])), (255, 0, 0), 5)
-    cv2.line(im, (int(align_project_keypoing["front"][1][0]), int(align_project_keypoing["front"][1][1])), (int(align_project_keypoing["front"][2][0]), int(align_project_keypoing["front"][2][1])), (255, 0, 0), 5)
-    cv2.line(im, (int(align_project_keypoing["front"][2][0]), int(align_project_keypoing["front"][2][1])), (int(align_project_keypoing["front"][3][0]), int(align_project_keypoing["front"][3][1])), (255, 0, 0), 5)
-    cv2.line(im, (int(align_project_keypoing["front"][3][0]), int(align_project_keypoing["front"][3][1])), (int(align_project_keypoing["front"][0][0]), int(align_project_keypoing["front"][0][1])), (255, 0, 0), 5)
+    # print(align_project_keypoing["front"])
+    # print(sph_foc_len/pc_ratio)
+    print("recommend sph_foc_len:",(bs+rt)*pc_ratio+f)
+    # im = np.ones((targeth, targetw,3), dtype=np.uint8)
+    # cv2.line(im, (int(align_project_keypoing["front"][0][0]), int(align_project_keypoing["front"][0][1])), (int(align_project_keypoing["front"][1][0]), int(align_project_keypoing["front"][1][1])), (255, 0, 0), 5)
+    # cv2.line(im, (int(align_project_keypoing["front"][1][0]), int(align_project_keypoing["front"][1][1])), (int(align_project_keypoing["front"][2][0]), int(align_project_keypoing["front"][2][1])), (255, 0, 0), 5)
+    # cv2.line(im, (int(align_project_keypoing["front"][2][0]), int(align_project_keypoing["front"][2][1])), (int(align_project_keypoing["front"][3][0]), int(align_project_keypoing["front"][3][1])), (255, 0, 0), 5)
+    # cv2.line(im, (int(align_project_keypoing["front"][3][0]), int(align_project_keypoing["front"][3][1])), (int(align_project_keypoing["front"][0][0]), int(align_project_keypoing["front"][0][1])), (255, 0, 0), 5)
     
-    cv2.line(im, (int(align_project_keypoing["right"][0][0]), int(align_project_keypoing["right"][0][1])), (int(align_project_keypoing["right"][1][0]), int(align_project_keypoing["right"][1][1])), (255, 0, 0), 5)
-    cv2.line(im, (int(align_project_keypoing["right"][1][0]), int(align_project_keypoing["right"][1][1])), (int(align_project_keypoing["right"][2][0]), int(align_project_keypoing["right"][2][1])), (255, 0, 0), 5)
-    cv2.line(im, (int(align_project_keypoing["right"][2][0]), int(align_project_keypoing["right"][2][1])), (int(align_project_keypoing["right"][3][0]), int(align_project_keypoing["right"][3][1])), (255, 0, 0), 5)
-    cv2.line(im, (int(align_project_keypoing["right"][3][0]), int(align_project_keypoing["right"][3][1])), (int(align_project_keypoing["right"][0][0]), int(align_project_keypoing["right"][0][1])), (255, 0, 0), 5)
+    # cv2.line(im, (int(align_project_keypoing["right"][0][0]), int(align_project_keypoing["right"][0][1])), (int(align_project_keypoing["right"][1][0]), int(align_project_keypoing["right"][1][1])), (255, 0, 0), 5)
+    # cv2.line(im, (int(align_project_keypoing["right"][1][0]), int(align_project_keypoing["right"][1][1])), (int(align_project_keypoing["right"][2][0]), int(align_project_keypoing["right"][2][1])), (255, 0, 0), 5)
+    # cv2.line(im, (int(align_project_keypoing["right"][2][0]), int(align_project_keypoing["right"][2][1])), (int(align_project_keypoing["right"][3][0]), int(align_project_keypoing["right"][3][1])), (255, 0, 0), 5)
+    # cv2.line(im, (int(align_project_keypoing["right"][3][0]), int(align_project_keypoing["right"][3][1])), (int(align_project_keypoing["right"][0][0]), int(align_project_keypoing["right"][0][1])), (255, 0, 0), 5)
     
-    cv2.line(im, (int(align_project_keypoing["front"][0][0]), int(align_project_keypoing["front"][0][1])), (int(align_project_keypoing["right"][2][0]), int(align_project_keypoing["right"][2][1])), (255, 0, 0), 5)
+    # cv2.line(im, (int(align_project_keypoing["front"][0][0]), int(align_project_keypoing["front"][0][1])), (int(align_project_keypoing["right"][2][0]), int(align_project_keypoing["right"][2][1])), (255, 0, 0), 5)
 
-    cv2.imshow("im", cv2.resize(im, None, fx=0.7, fy=0.7))
-    cv2.waitKey(0)
+    # cv2.imshow("im", cv2.resize(im, None, fx=0.7, fy=0.7))
+    # cv2.waitKey(0)
 # --------------------------------------------------------------------
 # (shift_width, shift_height): how far away the birdview looks outside
 # of the calibration pattern in horizontal and vertical directions

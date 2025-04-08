@@ -7,7 +7,7 @@ import pickle
 import setting
 import sys
 
-number = 1
+number = 0
 name = "left"
 c = 4
 

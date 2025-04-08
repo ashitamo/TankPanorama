@@ -25,8 +25,8 @@ def get_projection_map(camera_model, image,name):
     if choice > 0:
         src = np.float32(gui.keypoints) / scale
         print(src)
-        print(src[3][0]-src[2][0])
-        print(src[2][1]-src[0][1])
+        print("bodw:",src[3][0]-src[2][0])
+        print("bodh:",src[2][1]-src[0][1])
         dst = np.float32(dst_points)
         camera_model.align_project_matrix = cv2.getPerspectiveTransform(src, dst)
         camera_model.build_align_map()
@@ -55,7 +55,7 @@ def get_projection_map(camera_model, image,name):
 
 
 def main():
-    name = "back"
+    name = "front"
     shift = (0, 0)
     camera_name = name
     camera_file = "my_yaml/" + name + ".yaml"
